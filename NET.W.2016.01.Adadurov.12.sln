@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.25914.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task3.Logic", "Task3.Logic\Task3.Logic.csproj", "{2E395BC6-A749-478F-B927-6F6C287CED18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task3.ConsoleUI", "ConsoleApp1\Task3.ConsoleUI.csproj", "{B730E114-A904-48C5-B054-BDFFCC955B56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task3.ConsoleUI", "Task3.ConsoleUI\Task3.ConsoleUI.csproj", "{B730E114-A904-48C5-B054-BDFFCC955B56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
