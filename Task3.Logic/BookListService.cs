@@ -1,29 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Task3.LogicSet;
 
-namespace Task3.Logic
+namespace Task3.LogicBook
 {
     public class BookListService
     {
-        public static void AddBook(IBookStorage storage, Book book)
+        private Set<Book> _storage;
+
+        public BookListService() : this(null, EqualityComparer<Book>.Default)
         {
-            foreach (Book item in storage)
+        }
+
+        public BookListService(IEnumerable<Book> books) : this(books, EqualityComparer<Book>.Default)
+        {
+        }
+
+        public BookListService(IEnumerable<Book> books, IEqualityComparer<Book> equalityComparer)
+        {
+            if (equalityComparer == null)
+                throw new ArgumentNullException(nameof(equalityComparer));
+
+            if (books == null || books.Count() == 0)
+            {
+                _storage = new Set<Book>(equalityComparer, 4);
+            }
+            else
+            {
+                _storage = new Set<Book>(equalityComparer, books.Count());
+
+                foreach (Book item in books)
+                {
+                    AddBook(item);
+                }
+            }
+        }
+
+        public void AddBook(Book book)
+        {
+            foreach (Book item in _storage)
             {
                 if (item.Equals(book))
                 {
                     throw new ArgumentOutOfRangeException(nameof(book));
                 }
             }
-            storage.Add(book);
+            _storage.Insert(book);
         }
 
-        public static void RemoveBook(IBookStorage storage, Book book)
+        public void RemoveBook(Book book)
         {
             bool wasFound = false;
-            foreach (Book item in storage)
+            foreach (Book item in _storage)
             {
                 if (item.Equals(book))
                 {
@@ -34,7 +66,7 @@ namespace Task3.Logic
 
             if (wasFound)
             {
-                storage.Remove(book);
+                _storage.Remove(book);
             }
             else
             {
@@ -42,9 +74,9 @@ namespace Task3.Logic
             }
         }
 
-        public static Book FindBookByTag(IBookStorage storage, Predicate<Book> match)
+        public Book FindBookByTag(Predicate<Book> match)
         {
-            foreach (Book item in storage)
+            foreach (Book item in _storage)
             {
                 if (match(item))
                 {
@@ -54,24 +86,93 @@ namespace Task3.Logic
             return null;
         }
 
-        public static IBookStorage SortBookByTag(IBookStorage storage)
+        public IEnumerable<Book> SortBookByTag()
         {
-            return SortBookByTag(storage, Comparer<Book>.Default, true);
+            return SortBookByTag(Comparer<Book>.Default, true);
         }
-        public static IBookStorage SortBookByTag(IBookStorage storage, IComparer<Book> comparer)
+        public IEnumerable<Book> SortBookByTag(IComparer<Book> comparer)
         {
-            return SortBookByTag(storage, comparer, true);
+            return SortBookByTag(comparer, true);
         }
-        public static IBookStorage SortBookByTag(IBookStorage storage, IComparer<Book> comparer, bool asc)
+
+        public IEnumerable<Book> SortBookByTag(Comparison<Book> comparer)
+        {
+            return SortBookByTag(comparer, true);
+        }
+
+        public IEnumerable<Book> SortBookByTag(Comparison<Book> comparer, bool asc)
+        {
+            SortAdapter sa = new SortAdapter(comparer);
+            return SortBookByTag(sa, asc);
+        }
+
+        public IEnumerable<Book> SortBookByTag(IComparer<Book> comparer, bool asc)
         {
             if (asc)
             {
-                return new BookListStorage(storage.OrderBy(t => t, comparer));
+                return _storage.OrderBy(t => t, comparer);
             }
             else
             {
-                return new BookListStorage(storage.OrderByDescending(t => t, comparer));
+                return _storage.OrderByDescending(t => t, comparer);
+            }
+        }
+
+        public IEnumerator<Book> GetEnumerator()
+        {
+            return _storage.GetEnumerator();
+        }
+
+        public void Load(string filePath)
+        {
+            using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+            {
+                while (reader.BaseStream.Position != reader.BaseStream.Length)
+                {
+                    Book b = new Book(reader.ReadInt64());
+                    b.Author = reader.ReadString();
+                    b.Edition = reader.ReadInt32();
+                    b.Name = reader.ReadString();
+                    b.PageCount = reader.ReadInt32();
+                    b.Publisher = reader.ReadString();
+                    b.Year = reader.ReadInt32();
+                    _storage.Insert(b);
+                }
+            }
+        }
+
+        public void Save(string filePath)
+        {
+            using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.OpenOrCreate)))
+            {
+                foreach (Book item in _storage)
+                {
+                    writer.Write(item.ISBN);
+                    writer.Write(item.Author);
+                    writer.Write(item.Edition);
+                    writer.Write(item.Name);
+                    writer.Write(item.PageCount);
+                    writer.Write(item.Publisher);
+                    writer.Write(item.Year);
+                }
             }
         }
     }
+
+    #region Sort Adapter Class
+    public class SortAdapter : IComparer<Book>
+    {
+        private readonly Comparison<Book> _comparer;
+
+        public SortAdapter(Comparison<Book> comparer)
+        {
+            _comparer = comparer;
+        }
+
+        public int Compare(Book x, Book y)
+        {
+            return _comparer(x, y);
+        }
+    }
+    #endregion
 }

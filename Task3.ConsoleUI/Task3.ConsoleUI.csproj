@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Task3.ConsoleUI</RootNamespace>
     <AssemblyName>Task3.ConsoleUI</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Task3.Logic\Task3.Logic.csproj">
+    <ProjectReference Include="..\Task3.Logic\Task3.LogicBook.csproj">
       <Project>{2e395bc6-a749-478f-b927-6f6c287ced18}</Project>
-      <Name>Task3.Logic</Name>
+      <Name>Task3.LogicBook</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

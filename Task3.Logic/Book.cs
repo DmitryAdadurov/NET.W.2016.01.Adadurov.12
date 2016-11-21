@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Task3.Logic
+namespace Task3.LogicBook
 {
     public class Book : IEquatable<Book>, IComparable<Book>, IComparable
     {
@@ -15,7 +15,6 @@ namespace Task3.Logic
         public int Edition { get; set; }
         public string Publisher { get; set; }
         public int PageCount { get; set; }
-        public string Genre { get; set; }
 
         public Book(long isbn)
         {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Task3.Logic;
+using Task3.LogicBook;
 
 namespace Task3.ConsoleUI
 {
@@ -11,7 +11,7 @@ namespace Task3.ConsoleUI
     {
         static void Main(string[] args)
         {
-            BookListStorage bls = new BookListStorage();
+            BookListService bls = new BookListService();
             string choise;
             do
             {
@@ -53,39 +53,38 @@ namespace Task3.ConsoleUI
             } while (choise != "0");
         }
 
-        static void ToFile(BookListStorage bls)
+        static void ToFile(BookListService bls)
         {
             Console.WriteLine("Path to file:");
             string path = Console.ReadLine();
-            BookStorageIO.StorageWriter(bls, path);
+            bls.Save(path);
             ShowStorage(bls);
             Console.ReadKey();
         }
 
-        static void FromFile(BookListStorage bls)
+        static void FromFile(BookListService bls)
         {
             Console.WriteLine("Path to file: ");
             string path = Console.ReadLine();
-            BookStorageIO.StorageReader(bls, path);
+            bls.Load(path);
             ShowStorage(bls);
             Console.ReadKey();
         }
 
-        static void SortStorage(BookListStorage bls)
+        static void SortStorage(BookListService bls)
         {
             Console.WriteLine("Before");
             ShowStorage(bls);
             Console.WriteLine("After");
-            IBookStorage ibs = bls;
-            bls = (BookListStorage)BookListService.SortBookByTag(ibs);
+            bls = (BookListService)bls.SortBookByTag((t1, t2) => t1.CompareTo(t2));
             ShowStorage(bls);
         }
 
-        static void SearchBook(BookListStorage bls)
+        static void SearchBook(BookListService bls)
         {
             Console.WriteLine("ISBN: ");
             long isbn = ReadLong();
-            Book b = BookListService.FindBookByTag(bls, t => t.ISBN == isbn);
+            Book b = bls.FindBookByTag( t => t.ISBN == isbn);
             if (b == null)
                 Console.WriteLine("Not found.");
             else
@@ -93,7 +92,7 @@ namespace Task3.ConsoleUI
             Console.ReadKey();
         }
 
-        static void RemoveBook(BookListStorage bls)
+        static void RemoveBook(BookListService bls)
         {
             ShowStorage(bls);
             Console.WriteLine("Number of remove rec: ");
@@ -103,14 +102,14 @@ namespace Task3.ConsoleUI
             {
                 if (j == i)
                 {
-                    BookListService.RemoveBook(bls, item);
+                    bls.RemoveBook(item);
                 }
                 j++;
             }
             ShowStorage(bls);
         }
 
-        static void ShowStorage(BookListStorage bls)
+        static void ShowStorage(BookListService bls)
         {
             int i = 0;
             foreach (Book item in bls)
@@ -119,7 +118,7 @@ namespace Task3.ConsoleUI
             }
         }
 
-        static void AddBook(BookListStorage bls)
+        static void AddBook(BookListService bls)
         {
             Console.Write("ISBN: ");
             Book b = new Book(ReadLong());
@@ -131,7 +130,7 @@ namespace Task3.ConsoleUI
             b.Year = ReadInt();
             Console.Write("Publisher: ");
             b.Publisher = Console.ReadLine();
-            BookListService.AddBook(bls, b);
+            bls.AddBook(b);
         }
 
     #region Input Service
