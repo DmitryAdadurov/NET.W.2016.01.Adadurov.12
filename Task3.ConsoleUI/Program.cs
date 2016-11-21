@@ -4,14 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Task3.LogicBook;
+using NLog;
+using System.IO;
 
 namespace Task3.ConsoleUI
 {
     class Program
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
             BookListService bls = new BookListService();
+            
             string choise;
             do
             {
@@ -57,7 +61,14 @@ namespace Task3.ConsoleUI
         {
             Console.WriteLine("Path to file:");
             string path = Console.ReadLine();
-            bls.Save(path);
+            try
+            {
+                bls.Save(path);
+            }
+            catch (IOException ex)
+            {
+                logger.Error(ex.Message);
+            }
             ShowStorage(bls);
             Console.ReadKey();
         }
@@ -66,7 +77,14 @@ namespace Task3.ConsoleUI
         {
             Console.WriteLine("Path to file: ");
             string path = Console.ReadLine();
-            bls.Load(path);
+            try
+            {
+                bls.Load(path);
+            }
+            catch (IOException ex)
+            {
+                logger.Error(ex.Message);
+            }
             ShowStorage(bls);
             Console.ReadKey();
         }
@@ -102,7 +120,15 @@ namespace Task3.ConsoleUI
             {
                 if (j == i)
                 {
-                    bls.RemoveBook(item);
+                    try
+                    {
+                        bls.RemoveBook(item);
+                    }
+                    catch (LogicBook.Exceptions.BookListServiceRemoveNotExistingItemException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        logger.Error(ex.Message);
+                    }
                 }
                 j++;
             }
@@ -130,7 +156,15 @@ namespace Task3.ConsoleUI
             b.Year = ReadInt();
             Console.Write("Publisher: ");
             b.Publisher = Console.ReadLine();
-            bls.AddBook(b);
+            try
+            {
+                bls.AddBook(b);
+            }
+            catch (LogicBook.Exceptions.BookListServiceAddExistingItemException ex)
+            {
+                Console.WriteLine(ex.Message);
+                logger.Error(ex.Message);
+            }
         }
 
     #region Input Service

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Task3.LogicSet;
+using Task3.LogicBook.Exceptions;
 
 namespace Task3.LogicBook
 {
@@ -42,11 +43,14 @@ namespace Task3.LogicBook
 
         public void AddBook(Book book)
         {
+            if (book == null)
+                throw new ArgumentNullException(nameof(book));
+
             foreach (Book item in _storage)
             {
                 if (item.Equals(book))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(book));
+                    throw new BookListServiceAddExistingItemException();
                 }
             }
             _storage.Insert(book);
@@ -54,6 +58,9 @@ namespace Task3.LogicBook
 
         public void RemoveBook(Book book)
         {
+            if (book == null)
+                throw new ArgumentNullException(nameof(book));
+
             bool wasFound = false;
             foreach (Book item in _storage)
             {
@@ -70,7 +77,7 @@ namespace Task3.LogicBook
             }
             else
             {
-                throw new ArgumentOutOfRangeException(nameof(book));
+                throw new BookListServiceRemoveNotExistingItemException();
             }
         }
 
