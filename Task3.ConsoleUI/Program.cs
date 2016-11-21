@@ -76,7 +76,7 @@ namespace Task3.ConsoleUI
             Console.WriteLine("Before");
             ShowStorage(bls);
             Console.WriteLine("After");
-            bls = (BookListService)bls.SortBookByTag((t1, t2) => t1.CompareTo(t2));
+            bls = new BookListService(bls.SortBookByTag((t1, t2) => t1.CompareTo(t2)));
             ShowStorage(bls);
         }
 
